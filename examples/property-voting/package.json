@@ -1,0 +1,23 @@
+{
+  "name": "property-voting-demo",
+  "version": "1.0.0",
+  "description": "Anonymous Property Voting dApp - FHEVM SDK Example",
+  "scripts": {
+    "dev": "http-server public -p 3001 -c-1 --cors -o",
+    "build": "echo 'Static HTML - no build needed'",
+    "start": "http-server public -p 3001 -c-1 --cors"
+  },
+  "dependencies": {
+    "@fhevm/universal-sdk": "file:../../packages/fhevm-sdk",
+    "ethers": "^6.10.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "fhevm",
+    "voting",
+    "privacy",
+    "property-management"
+  ]
+}
