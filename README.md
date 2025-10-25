@@ -221,20 +221,12 @@ npm test
 - [Property Voting Guide](./examples/property-voting/README.md)
 - [API Reference](./docs/API.md)
 
-## 🎥 Video Demo
 
-[![Demo Video](./demo-thumbnail.png)](./demo.mp4)
-
-Watch the video demonstration showing:
-1. Quick SDK setup (<10 lines of code)
-2. Integration in Next.js application
-3. Encryption and decryption workflows
-4. Real-world use case (property voting)
 
 ## 🌐 Live Demos
 
-- [Next.js Demo](https://fhevm-nextjs-demo.vercel.app)
-- [Property Voting dApp](https://fhevm-voting.vercel.app)
+
+- [Property Voting dApp](https://property-voting.vercel.app/)
 
 ## 📋 Requirements Met
 
