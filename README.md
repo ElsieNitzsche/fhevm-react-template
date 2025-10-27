@@ -16,6 +16,13 @@
 - 🚀 **Production Ready** - Built on official Zama FHEVM libraries
 - 📚 **Well Documented** - Extensive documentation and examples
 
+## 🌐 Live Demos
+
+
+- [Property Voting dApp](https://property-voting.vercel.app/)
+
+demo.mp4
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -347,10 +354,7 @@ npm test
 
 
 
-## 🌐 Live Demos
 
-
-- [Property Voting dApp](https://property-voting.vercel.app/)
 
 ## 🆕 Recent Updates
 
