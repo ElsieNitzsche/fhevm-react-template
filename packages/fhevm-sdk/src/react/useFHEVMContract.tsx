@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Contract, Signer } from 'ethers';
-import { FHEVMClient } from '../client';
+import { FHEVMClient } from '../core/fhevm';
 import { createFHEVMContract } from '../utils';
 
 export interface UseFHEVMContractOptions {

@@ -5,8 +5,8 @@
  * @packageDocumentation
  */
 
-export { FHEVMClient, createFHEVMClient } from './client';
-export type { FHEVMConfig, EncryptedInput } from './client';
+export { FHEVMClient, createFHEVMClient } from './core/fhevm';
+export type { FHEVMConfig, EncryptedInput } from './core/fhevm';
 
 export {
   NETWORKS,
@@ -22,7 +22,22 @@ export {
   formatDuration,
   hasWeb3Provider,
   getCurrentTimestamp,
+  encryptNumber,
+  encryptBoolean,
+  encryptAddress,
+  encryptBatch,
+  userDecrypt,
+  publicDecrypt,
+  safeUserDecrypt,
+  batchUserDecrypt,
+  generatePermit,
 } from './utils';
 
-// Re-export commonly used types from dependencies
+export type {
+  NetworkConfig,
+  EncryptionBits,
+  EncryptionResult,
+  DecryptionResult,
+} from './types';
+
 export type { BrowserProvider, JsonRpcProvider, Signer, Contract } from 'ethers';

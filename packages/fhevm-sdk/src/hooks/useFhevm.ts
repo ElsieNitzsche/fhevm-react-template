@@ -1,14 +1,13 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { BrowserProvider, Signer } from 'ethers';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Signer } from 'ethers';
 import { FHEVMClient, FHEVMConfig, createFHEVMClient } from '../core/fhevm';
-import { hasWeb3Provider } from '../utils';
 
-export interface UseFHEVMOptions {
+export interface UseFhevmOptions {
   config: FHEVMConfig;
   autoInit?: boolean;
 }
 
-export interface UseFHEVMReturn {
+export interface UseFhevmReturn {
   client: FHEVMClient | null;
   isInitialized: boolean;
   isLoading: boolean;
@@ -21,27 +20,7 @@ export interface UseFHEVMReturn {
   generatePermit: (contractAddress: string, signer: Signer) => Promise<string>;
 }
 
-/**
- * React hook for FHEVM client
- * Provides easy access to FHEVM encryption/decryption functionality
- *
- * @example
- * ```tsx
- * function MyComponent() {
- *   const { client, isInitialized, encryptNumber } = useFHEVM({
- *     config: {
- *       network: {
- *         chainId: 11155111,
- *         rpcUrl: 'https://rpc.sepolia.org'
- *       }
- *     }
- *   });
- *
- *   const encrypted = await encryptNumber(42, 8);
- * }
- * ```
- */
-export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
+export function useFhevm(options: UseFhevmOptions): UseFhevmReturn {
   const { config, autoInit = true } = options;
 
   const [client, setClient] = useState<FHEVMClient | null>(null);
@@ -51,7 +30,6 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
 
   const clientRef = useRef<FHEVMClient | null>(null);
 
-  // Initialize client
   const init = useCallback(async () => {
     if (clientRef.current?.isInitialized()) {
       return;
@@ -76,14 +54,12 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
     }
   }, [config]);
 
-  // Auto-initialize on mount if enabled
   useEffect(() => {
     if (autoInit && !clientRef.current) {
       init();
     }
   }, [autoInit, init]);
 
-  // Encrypt number helper
   const encryptNumber = useCallback(
     async (value: number, bits: 8 | 16 | 32 | 64 = 8) => {
       if (!clientRef.current) {
@@ -94,7 +70,6 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
     []
   );
 
-  // Encrypt boolean helper
   const encryptBoolean = useCallback(async (value: boolean) => {
     if (!clientRef.current) {
       throw new Error('FHEVM client not initialized');
@@ -102,7 +77,6 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
     return clientRef.current.encryptBoolean(value);
   }, []);
 
-  // Encrypt address helper
   const encryptAddress = useCallback(async (address: string) => {
     if (!clientRef.current) {
       throw new Error('FHEVM client not initialized');
@@ -110,7 +84,6 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
     return clientRef.current.encryptAddress(address);
   }, []);
 
-  // User decrypt helper
   const userDecrypt = useCallback(
     async (handle: bigint, contractAddress: string, signer: Signer) => {
       if (!clientRef.current) {
@@ -121,7 +94,6 @@ export function useFHEVM(options: UseFHEVMOptions): UseFHEVMReturn {
     []
   );
 
-  // Generate permit signature helper
   const generatePermit = useCallback(
     async (contractAddress: string, signer: Signer) => {
       if (!clientRef.current) {
