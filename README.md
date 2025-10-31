@@ -33,13 +33,29 @@ git clone https://github.com/your-username/fhevm-universal-sdk.git
 cd fhevm-universal-sdk
 
 # Install all dependencies (root + packages + examples)
-npm run install:all
+npm install
 
 # Build the SDK
-npm run build
+npm run build:sdk
 
-# Run Next.js demo
-npm run dev:nextjs
+# Run examples
+npm run dev:nextjs        # Run Next.js demo
+npm run dev:voting        # Run Property Voting dApp
+```
+
+### Running the Property Voting Example
+
+```bash
+# Navigate to the property-voting example
+cd examples/property-voting
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Open browser at http://localhost:3001
 ```
 
 ### Usage in Your Project
@@ -296,26 +312,71 @@ npm run dev
 ```
 
 **Features:**
-- Anonymous resident registration with encrypted unit numbers
+- Anonymous resident registration with encrypted unit numbers using fhEVM SDK
 - Admin proposal creation and management
-- Encrypted vote submission with real-time countdown
-- FHE-based vote tallying with privacy preservation
+- Encrypted vote submission with real-time countdown timer
+- FHE-based vote tallying with complete privacy preservation
 - Result decryption with visual progress bars
 - Automatic network switching to Sepolia testnet
+- Full SDK integration for encryption operations
 
 **Technology Stack:**
 - React 18.2 with TypeScript
-- FHEVM Universal SDK integration
+- @fhevm/universal-sdk for all encryption operations
 - Ethers.js 6.10 for blockchain interactions
 - Parcel bundler for development and production builds
 
-**Components:**
-- `VotingApp` - Main application orchestrating wallet and contract state
-- `WalletConnection` - MetaMask integration with network validation
-- `ResidentRegistration` - Encrypted unit number registration
-- `AdminPanel` - Proposal creation interface
-- `VoteSubmission` - Voting interface with countdown timer
-- `ResultsDisplay` - Voting results visualization
+**React Components:**
+- `VotingApp.tsx` - Main application orchestrating wallet and contract state
+- `WalletConnection.tsx` - MetaMask integration with network validation
+- `ResidentRegistration.tsx` - Encrypted unit number registration (uses SDK encryption)
+- `AdminPanel.tsx` - Proposal creation interface
+- `VoteSubmission.tsx` - Voting interface with countdown timer (uses SDK encryption)
+- `ResultsDisplay.tsx` - Voting results visualization
+
+**SDK Integration:**
+The application demonstrates proper SDK integration:
+- `fhevm-integration.js` - SDK wrapper providing encryption utilities
+- `utils.js` - Helper functions using SDK utilities
+- Automatic SDK initialization on first use
+- Encrypted vote submission using `fhevmIntegration.encryptVote()`
+- Encrypted unit number registration using `fhevmIntegration.encryptUnitNumber()`
+
+**Example Code - Encrypted Vote Submission:**
+
+```typescript
+// From VoteSubmission.tsx
+const handleVote = async (voteChoice: number) => {
+  // Initialize FHEVM SDK if not already initialized
+  if (!fhevmIntegration.isInitialized()) {
+    await fhevmIntegration.init();
+  }
+
+  // Encrypt vote using FHEVM SDK
+  const encryptedVote = await fhevmIntegration.encryptVote(voteChoice);
+
+  // Submit encrypted vote to contract
+  await onSubmitVote(proposal.id, encryptedVote);
+};
+```
+
+**Example Code - Encrypted Registration:**
+
+```typescript
+// From ResidentRegistration.tsx
+const handleRegister = async () => {
+  // Initialize FHEVM SDK if not already initialized
+  if (!fhevmIntegration.isInitialized()) {
+    await fhevmIntegration.init();
+  }
+
+  // Encrypt unit number using FHEVM SDK
+  const encryptedUnit = await fhevmIntegration.encryptUnitNumber(unitNum);
+
+  // Register with encrypted unit number
+  await onRegister(encryptedUnit);
+};
+```
 
 See [Property Voting Guide](./examples/property-voting/README.md) for detailed setup instructions.
 
@@ -358,13 +419,25 @@ npm test
 
 ## 🆕 Recent Updates
 
-### Property Voting - React Conversion (Latest)
-The property-voting example has been completely converted from static HTML to a modern React application:
+### Property Voting - Full React & SDK Integration (Latest)
+The property-voting example has been completely converted to a modern React application with full fhEVM SDK integration:
+
+**React Architecture:**
 - 6 modular React components with TypeScript
 - Enhanced developer experience with hot module replacement
 - Improved code organization and maintainability
-- Full SDK integration preserved with 100% feature parity
-- Professional build system with Parcel
+- Professional build system with Parcel bundler
+- Full type safety with TypeScript interfaces
+
+**SDK Integration Enhancements:**
+- ✅ Complete fhEVM Universal SDK integration for all encryption operations
+- ✅ `VoteSubmission.tsx` now uses SDK's `encryptVote()` method
+- ✅ `ResidentRegistration.tsx` now uses SDK's `encryptUnitNumber()` method
+- ✅ Automatic SDK initialization with lazy loading
+- ✅ Proper type definitions for encrypted data (Uint8Array)
+- ✅ Centralized SDK wrapper in `fhevm-integration.js`
+- ✅ Utility functions leveraging SDK helpers
+- ✅ No more direct fhevmjs usage - all through SDK abstraction
 
 ### Next.js Demo - Structure Complete
 All components from the Next.js 13+ App Router structure are implemented:
@@ -382,6 +455,55 @@ All components from the Next.js 13+ App Router structure are implemented:
 - ✅ TypeScript strict mode enabled
 - ✅ Comprehensive error handling
 
+## 🏗️ Architecture Improvements
+
+### Property Voting App - React Migration
+
+**What Changed:**
+- ❌ **Before**: Static HTML/JavaScript with inline scripts
+- ✅ **After**: Modern React application with TypeScript
+
+**File Structure Transformation:**
+
+```
+Before (Static):                     After (React):
+├── index.html                       ├── public/
+├── script.js                        │   └── index.html
+└── config.js                        ├── src/
+                                     │   ├── components/
+                                     │   │   ├── VotingApp.tsx
+                                     │   │   ├── WalletConnection.tsx
+                                     │   │   ├── ResidentRegistration.tsx
+                                     │   │   ├── AdminPanel.tsx
+                                     │   │   ├── VoteSubmission.tsx
+                                     │   │   └── ResultsDisplay.tsx
+                                     │   ├── fhevm-integration.js
+                                     │   ├── utils.js
+                                     │   ├── config.ts
+                                     │   ├── index.tsx
+                                     │   └── styles.css
+                                     └── package.json
+```
+
+**Key Improvements:**
+- Component-based architecture for better code reusability
+- TypeScript interfaces for type safety
+- Proper state management with React hooks
+- Separated concerns (UI components vs business logic)
+- SDK integration in dedicated modules
+- Development server with hot reload
+
+**SDK Integration Pattern:**
+
+```
+Component → fhevm-integration.js → @fhevm/universal-sdk → Smart Contract
+```
+
+All encryption operations now flow through the SDK wrapper:
+- `encryptVote(voteChoice)` - Encrypts vote before submission
+- `encryptUnitNumber(unitNumber)` - Encrypts unit number for registration
+- `init()` - Initializes SDK with Sepolia network configuration
+
 ## 📋 Requirements Met
 
 ✅ **Framework Agnostic** - Core SDK works with any framework
@@ -390,6 +512,7 @@ All components from the Next.js 13+ App Router structure are implemented:
 ✅ **Official SDK Compliance** - Follows Zama's guidelines
 ✅ **Quick Setup** - Less than 10 lines to get started
 ✅ **React Examples** - Both examples now use modern React architecture
+✅ **Full SDK Integration** - All encryption operations use the SDK
 
 ### Evaluation Criteria
 

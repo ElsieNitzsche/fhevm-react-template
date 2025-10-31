@@ -45,7 +45,6 @@
     "dotenv": "^16.3.1"
   },
   "dependencies": {
-    "@fhevm/sdk": "^0.1.0",
     "fhevmjs": "^0.5.0"
   },
   "engines": {
