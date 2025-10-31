@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { validateUnitNumber, formatTimestamp } from '../utils';
+import { fhevmIntegration } from '../fhevm-integration';
 
 interface ResidentRegistrationProps {
   isRegistered: boolean;
   registrationTime?: number;
   hasVoted: boolean;
-  onRegister: (unitNumber: number) => Promise<void>;
+  onRegister: (encryptedUnitNumber: Uint8Array) => Promise<void>;
 }
 
 export const ResidentRegistration: React.FC<ResidentRegistrationProps> = ({
@@ -28,7 +29,20 @@ export const ResidentRegistration: React.FC<ResidentRegistrationProps> = ({
 
     setLoading(true);
     try {
-      await onRegister(parseInt(unitNumber));
+      // Initialize FHEVM SDK if not already initialized
+      if (!fhevmIntegration.isInitialized()) {
+        console.log('Initializing FHEVM SDK for unit number encryption...');
+        await fhevmIntegration.init();
+      }
+
+      // Encrypt unit number using FHEVM SDK
+      const unitNum = parseInt(unitNumber);
+      console.log(`Encrypting unit number: ${unitNum}`);
+      const encryptedUnit = await fhevmIntegration.encryptUnitNumber(unitNum);
+      console.log('Unit number encrypted successfully');
+
+      // Register with encrypted unit number
+      await onRegister(encryptedUnit);
       setUnitNumber('');
     } catch (err: any) {
       setError(err.message || 'Registration failed');

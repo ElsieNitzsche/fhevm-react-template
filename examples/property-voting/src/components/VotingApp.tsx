@@ -219,14 +219,14 @@ export const VotingApp: React.FC = () => {
     }
   };
 
-  const handleRegisterResident = async (unitNumber: number) => {
+  const handleRegisterResident = async (encryptedUnitNumber: Uint8Array) => {
     if (!contract || !isCorrectNetwork) {
       throw new Error('Please connect wallet and switch to Sepolia Testnet');
     }
 
     try {
       showMessage('success', 'Transaction submitted. Waiting for confirmation...');
-      const tx = await contract.registerResident(unitNumber);
+      const tx = await contract.registerResident(encryptedUnitNumber);
       await tx.wait();
       showMessage('success', 'Resident registration successful!');
       await loadResidentStatus();
@@ -253,7 +253,7 @@ export const VotingApp: React.FC = () => {
     }
   };
 
-  const handleSubmitVote = async (proposalId: number, voteChoice: number) => {
+  const handleSubmitVote = async (proposalId: number, encryptedVote: Uint8Array) => {
     if (!contract || !account || !isCorrectNetwork) {
       showMessage('error', 'Please connect wallet and switch to Sepolia Testnet');
       return;
@@ -271,7 +271,7 @@ export const VotingApp: React.FC = () => {
 
     try {
       showMessage('success', 'Vote submitted. Waiting for confirmation...');
-      const tx = await contract.submitVote(proposalId, voteChoice);
+      const tx = await contract.submitVote(proposalId, encryptedVote);
       await tx.wait();
       showMessage('success', 'Vote submitted successfully!');
       await loadData();

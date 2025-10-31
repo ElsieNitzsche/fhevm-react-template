@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatTimestamp, calculateTimeRemaining } from '../utils';
+import { fhevmIntegration } from '../fhevm-integration';
 
 interface Proposal {
   id: number;
@@ -13,7 +14,7 @@ interface Proposal {
 
 interface VoteSubmissionProps {
   proposal: Proposal | null;
-  onSubmitVote: (proposalId: number, voteChoice: number) => Promise<void>;
+  onSubmitVote: (proposalId: number, encryptedVote: Uint8Array) => Promise<void>;
 }
 
 export const VoteSubmission: React.FC<VoteSubmissionProps> = ({
@@ -47,7 +48,19 @@ export const VoteSubmission: React.FC<VoteSubmissionProps> = ({
 
     setLoading(true);
     try {
-      await onSubmitVote(proposal.id, voteChoice);
+      // Initialize FHEVM SDK if not already initialized
+      if (!fhevmIntegration.isInitialized()) {
+        console.log('Initializing FHEVM SDK for vote encryption...');
+        await fhevmIntegration.init();
+      }
+
+      // Encrypt vote using FHEVM SDK
+      console.log(`Encrypting vote: ${voteText} (${voteChoice})`);
+      const encryptedVote = await fhevmIntegration.encryptVote(voteChoice);
+      console.log('Vote encrypted successfully');
+
+      // Submit encrypted vote
+      await onSubmitVote(proposal.id, encryptedVote);
     } catch (err) {
       console.error('Vote submission failed:', err);
     } finally {
