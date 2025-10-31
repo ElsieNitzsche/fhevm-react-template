@@ -31,7 +31,7 @@ export {
   safeUserDecrypt,
   batchUserDecrypt,
   generatePermit,
-} from './utils';
+} from './utils/index';
 
 export type {
   NetworkConfig,

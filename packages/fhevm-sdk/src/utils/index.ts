@@ -150,7 +150,7 @@ export function formatDuration(seconds: number): string {
 }
 
 export function hasWeb3Provider(): boolean {
-  return typeof window !== 'undefined' && typeof window.ethereum !== 'undefined';
+  return typeof window !== 'undefined' && typeof (window as any).ethereum !== 'undefined';
 }
 
 export function getCurrentTimestamp(): number {
